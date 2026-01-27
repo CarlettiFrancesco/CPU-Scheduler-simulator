@@ -27,7 +27,6 @@ function reset() {
    tableEl.replaceChild(newTBodyEl, oldTBodyEl);
 }
 function start() {
-    // 1. Creiamo una copia dei dati per il calcolo del Gantt (SJF)
     let processiPerGantt = [];
     for (let i = 0; i < p.length; i++) {
         processiPerGantt.push({
@@ -37,36 +36,32 @@ function start() {
         });
     }
 
-    // 2. Ordiniamo la copia per il Diagramma di Gantt (SJF)
     processiPerGantt.sort((a, b) => {
         if (a.arrivo !== b.arrivo) return a.arrivo - b.arrivo;
-        return a.burst - b.burst; // Se arrivano insieme, il più corto va prima
+        return a.burst - b.burst;
     });
 
-    // 3. Popoliamo la tabella (mantenendo l'ordine di inserimento p1, p2, p3...)
     let tableEl = document.getElementById("idTable");
     let oldTBodyEl = tableEl.getElementsByTagName('tbody')[0];
     let newTBodyEl = document.createElement('tbody');
 
     for (let i = 0; i < p.length; i++) {
         const trEl = newTBodyEl.insertRow();
-        
-        // Solo 3 colonne come richiesto
-        trEl.insertCell().appendChild(document.createTextNode(p[i]));  // Processi
-        trEl.insertCell().appendChild(document.createTextNode(bt[i])); // Tempo di Burst
-        trEl.insertCell().appendChild(document.createTextNode(at[i])); // Tempo di Arrivo
+
+        trEl.insertCell().appendChild(document.createTextNode(p[i]));  
+        trEl.insertCell().appendChild(document.createTextNode(bt[i])); 
+        trEl.insertCell().appendChild(document.createTextNode(at[i])); 
     }
 
     tableEl.replaceChild(newTBodyEl, oldTBodyEl);
 
-    // 4. Mostriamo e disegniamo la progress bar
     document.getElementById("output").style.display = "block";
     disegnaGantt(processiPerGantt);
 }
 
 function disegnaGantt(listaOrdinata) {
     let ganttContainer = document.querySelector("#output .progress");
-    ganttContainer.innerHTML = ""; // Svuota la barra precedente
+    ganttContainer.innerHTML = "";
 
     let totalBurst = 0;
     listaOrdinata.forEach(proc => totalBurst += proc.burst);
